@@ -31,6 +31,49 @@ app.config["MAX_CONTENT_LENGTH"] = 2 * 1024 * 1024
 CORS(app, resources={r"/api/*": {"origins": "*"}},
      allow_headers=["Content-Type", "Authorization", "Idempotency-Key"])
 
+
+# --------------------------------------------------------------------------- #
+# Vercel routing fix.
+# Some Vercel Python-runtime builds deliver a rewritten request with the
+# DESTINATION path ("/api/index") instead of the original URL, so no Flask
+# route ever matches (every /api/* call 404s / 405s).  vercel.json therefore
+# forwards the original sub-path as the ``vpath`` query parameter and this
+# WSGI middleware restores it BEFORE Flask performs URL matching.
+# --------------------------------------------------------------------------- #
+class _VercelPathFix:
+    def __init__(self, wsgi_app):
+        self.wsgi_app = wsgi_app
+
+    def __call__(self, environ, start_response):
+        path = environ.get("PATH_INFO") or "/"
+        if path.rstrip("/") in ("/api/index", "/api/index.py"):
+            from urllib.parse import parse_qs, urlencode
+            args = parse_qs(environ.get("QUERY_STRING", ""), keep_blank_values=True)
+            vpath = (args.pop("vpath", [""])[0] or "").strip("/")
+            if vpath:
+                environ["PATH_INFO"] = "/api/" + vpath
+                environ["QUERY_STRING"] = urlencode(args, doseq=True)
+            else:
+                # Diagnostic payload — makes routing problems visible instead
+                # of a silent 404.  Remove once routing is confirmed working.
+                import json as _json
+                diag = {
+                    "error": "path-rewrite diagnostic",
+                    "method": environ.get("REQUEST_METHOD"),
+                    "seen_path": path,
+                    "query": environ.get("QUERY_STRING", ""),
+                    "x_headers": {k.lower(): v for k, v in environ.items()
+                                  if k.startswith("HTTP_X_")},
+                }
+                body = _json.dumps(diag).encode()
+                start_response("200 OK", [("Content-Type", "application/json"),
+                                          ("Content-Length", str(len(body)))])
+                return [body]
+        return self.wsgi_app(environ, start_response)
+
+
+app.wsgi_app = _VercelPathFix(app.wsgi_app)
+
 # Index creation must NEVER crash the serverless cold start: if MongoDB is
 # unreachable (e.g. MONGODB_URI missing on a fresh Vercel deploy) the app still
 # boots and every request surfaces a clean, actionable JSON error instead of
