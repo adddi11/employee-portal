@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Employees · Zentra HR</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%237c3aed'/><text x='50' y='68' font-size='52' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>Z</text></svg>" />
+</head>
+<body>
+  <div class="app" id="app"></div>
+
+  <div class="modal-back" id="emp-modal">
+    <div class="modal wide">
+      <div class="modal-head">
+        <div><div class="modal-title" id="emp-modal-title">Onboard Employee</div>
+        <div class="modal-sub" id="emp-modal-sub">Creates the record and a login account atomically</div></div>
+        <button class="modal-x" data-close><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="emp-form" class="form-grid">
+          <div class="form-section">Personal details</div>
+          <div class="field"><label>First name *</label><input name="first_name" required maxlength="60" /></div>
+          <div class="field"><label>Last name *</label><input name="last_name" required maxlength="60" /></div>
+          <div class="field"><label>Work email *</label><input name="email" type="email" required maxlength="120" /></div>
+          <div class="field"><label>Phone</label><input name="phone" maxlength="20" placeholder="+91 …" /></div>
+          <div class="form-section">Job details</div>
+          <div class="field"><label>Department</label><select name="department_id" id="f-dept"></select></div>
+          <div class="field"><label>Reports to</label><select name="manager_id" id="f-mgr"></select></div>
+          <div class="field"><label>Designation</label><input name="designation" maxlength="80" placeholder="e.g. Backend Developer" /></div>
+          <div class="field"><label>Employment type</label>
+            <select name="employment_type">
+              <option value="full_time">Full time</option>
+              <option value="intern">Intern</option>
+              <option value="contract">Contract</option>
+            </select></div>
+          <div class="field"><label>Join date</label><input name="join_date" type="date" /></div>
+          <div class="field"><label>Monthly salary (₹) *</label><input name="salary" type="number" min="1" step="1000" placeholder="e.g. 75000" /></div>
+          <div class="form-section">Account &amp; leave setup</div>
+          <div class="field"><label>Account role</label>
+            <select name="account_role" id="f-role">
+              <option value="employee">Employee</option>
+              <option value="manager">Manager</option>
+              <option value="hr">HR</option>
+              <option value="admin">Admin</option>
+            </select></div>
+          <div class="field"><label>Initial password</label><input name="password" type="text" value="Password@123" minlength="8" /></div>
+          <div class="field"><label>Annual leaves</label><input name="annual" type="number" value="20" min="0" /></div>
+          <div class="field"><label>Sick leaves</label><input name="sick" type="number" value="12" min="0" /></div>
+          <div class="field"><label>Casual leaves</label><input name="casual" type="number" value="8" min="0" /></div>
+        </form>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" data-close>Cancel</button>
+        <button class="btn btn-primary" id="emp-save"><i data-lucide="user-plus"></i> Onboard</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-back" id="view-modal">
+    <div class="modal">
+      <div class="modal-head">
+        <div><div class="modal-title">Employee Profile</div></div>
+        <button class="modal-x" data-close><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body" id="view-body"></div>
+    </div>
+  </div>
+
+  <div class="toasts" id="toasts"></div>
+  <script src="js/app.js"></script>
+  <script src="js/employees.js"></script>
+</body>
+</html>

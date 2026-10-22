@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Leave Requests · Zentra HR</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%237c3aed'/><text x='50' y='68' font-size='52' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>Z</text></svg>" />
+</head>
+<body>
+  <div class="app" id="app"></div>
+
+  <div class="modal-back" id="apply-modal">
+    <div class="modal">
+      <div class="modal-head">
+        <div><div class="modal-title">Apply for Leave</div>
+        <div class="modal-sub">Protected by an idempotency key — safe from double submits</div></div>
+        <button class="modal-x" data-close><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="apply-form" class="form-grid">
+          <div class="field"><label>Leave type *</label>
+            <select name="leave_type" required>
+              <option value="annual">Annual</option>
+              <option value="sick">Sick</option>
+              <option value="casual">Casual</option>
+            </select></div>
+          <div class="field"><label>Days</label><input name="days-preview" id="days-preview" disabled value="—" /></div>
+          <div class="field"><label>From *</label><input name="start_date" type="date" required /></div>
+          <div class="field"><label>To *</label><input name="end_date" type="date" required /></div>
+          <div class="field full"><label>Reason *</label><textarea name="reason" required maxlength="400" placeholder="Short context for your reviewer…"></textarea></div>
+        </form>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" data-close>Cancel</button>
+        <button class="btn btn-primary" id="apply-save"><i data-lucide="send"></i> Submit request</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toasts" id="toasts"></div>
+  <script src="js/app.js"></script>
+  <script src="js/leaves.js"></script>
+</body>
+</html>
